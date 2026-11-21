@@ -1,4 +1,4 @@
-name: Publicar Release Windows (FL-Lite Studio)
+name: Publicar Release Windows Portable (FL-Lite Studio)
 
 on:
   push:
@@ -28,18 +28,13 @@ jobs:
           $clean = $tag.TrimStart('v', 'V')
           echo "version=$clean" >> $env:GITHUB_OUTPUT
 
-      - name: Compilar FL-Lite Studio (Release)
+      - name: Compilar ejecutable portable unico (sin instalar .NET)
         shell: pwsh
         run: |
-          dotnet publish FLLiteStudio.csproj -c Release -r win-x64 --self-contained false -p:Version=${{ steps.ver.outputs.version }} -o publish_out
+          dotnet publish FLLiteStudio.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=None -p:Version=${{ steps.ver.outputs.version }} -p:AssemblyVersion=${{ steps.ver.outputs.version }}.0 -p:FileVersion=${{ steps.ver.outputs.version }}.0 -o publish_out
 
-      - name: Empaquetar ZIP para actualizador automatico
-        shell: pwsh
-        run: |
-          Compress-Archive -Path "publish_out\*" -DestinationPath "FLLiteStudio-win-x64.zip" -Force
-
-      - name: Crear GitHub Release
+      - name: Crear GitHub Release con FLLiteStudio.exe portable
         uses: softprops/action-gh-release@v2
         with:
-          files: FLLiteStudio-win-x64.zip
+          files: publish_out/FLLiteStudio.exe
           generate_release_notes: true
