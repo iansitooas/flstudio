@@ -1,0 +1,369 @@
+<Window x:Class="FLLiteStudio.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctrl="clr-namespace:FLLiteStudio.Controls"
+        Title="FL-Lite Studio"
+        Width="1260" Height="790"
+        MinWidth="1000" MinHeight="640"
+        Background="#15181D"
+        Foreground="#E6EBF2"
+        WindowStartupLocation="CenterScreen"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        PreviewKeyUp="Window_PreviewKeyUp"
+        Closing="Window_Closing">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- 0: Native Menu Bar -->
+            <RowDefinition Height="Auto"/> <!-- 1: GitHub Update Notification Banner (collapsed unless update found) -->
+            <RowDefinition Height="Auto"/> <!-- 2: Clean Transport Bar -->
+            <RowDefinition Height="Auto"/> <!-- 3: 4-Step Navigation Tabs -->
+            <RowDefinition Height="Auto"/> <!-- 4: Contextual Plain-Spanish Guide Banner -->
+            <RowDefinition Height="*"/>    <!-- 5: Main Active Workspace -->
+            <RowDefinition Height="26"/>   <!-- 6: Status Bar -->
+        </Grid.RowDefinitions>
+
+        <!-- ================================================================ -->
+        <!-- 0. NATIVE WINDOWS MENU BAR                                       -->
+        <!-- ================================================================ -->
+        <Menu Grid.Row="0" Padding="4,2">
+            <MenuItem Header="_Archivo">
+                <MenuItem Header="Nuevo proyecto vacío" Click="MenuNewEmpty_Click"/>
+                <Separator/>
+                <MenuItem Header="Abrir proyecto (.fls)..." Click="MenuOpenProject_Click"/>
+                <MenuItem Header="Guardar proyecto (.fls)..." Click="MenuSaveProject_Click"/>
+                <Separator/>
+                <MenuItem Header="Exportar Audio WAV (16-bit Estándar)..." Click="MenuExportWav16_Click"/>
+                <MenuItem Header="Exportar Audio WAV (24-bit Mastering)..." Click="MenuExportWav24_Click"/>
+                <MenuItem Header="Exportar Patrón a MIDI (.mid)..." Click="MenuExportMidi_Click"/>
+                <Separator/>
+                <MenuItem Header="Salir" Click="MenuExit_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="_Plantillas Demo">
+                <MenuItem Header="Trap 808 - Metro Dark (140 BPM)" Click="MenuDemoTrap_Click"/>
+                <MenuItem Header="EDM Synthwave - Neon Drive (126 BPM)" Click="MenuDemoEdm_Click"/>
+                <MenuItem Header="Lo-Fi Chill - Midnight Rhodes (84 BPM)" Click="MenuDemoLoFi_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="_Edición">
+                <MenuItem Header="Deshacer (Ctrl+Z)" Click="MenuUndo_Click"/>
+                <MenuItem Header="Rehacer (Ctrl+Y)" Click="MenuRedo_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="_Rendimiento">
+                <MenuItem x:Name="MenuEcoMode" Header="Modo Ligero (PC de bajos recursos)" IsCheckable="True" Click="MenuEcoMode_Click"/>
+                <Separator/>
+                <MenuItem Header="Buffer 512 (Baja latencia - PC rápida)" Click="MenuBuf512_Click"/>
+                <MenuItem Header="Buffer 1024 (Equilibrado - Recomendado)" Click="MenuBuf1024_Click"/>
+                <MenuItem Header="Buffer 2048 (Máxima estabilidad - PC lenta)" Click="MenuBuf2048_Click"/>
+                <Separator/>
+                <MenuItem Header="Conectar teclado MIDI USB" Click="MenuConnectMidi_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="Ac_tualizaciones">
+                <MenuItem Header="Buscar actualizaciones ahora..." Click="MenuCheckUpdates_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="_Ayuda">
+                <MenuItem x:Name="MenuShowGuide" Header="Mostrar guía paso a paso en pantalla" IsCheckable="True" IsChecked="True" Click="MenuShowGuide_Click"/>
+                <MenuItem Header="Guía rápida y atajos de teclado" Click="MenuHelp_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- ================================================================ -->
+        <!-- 1. AUTOMATIC GITHUB UPDATE BANNER (hidden until update found)    -->
+        <!-- ================================================================ -->
+        <Border x:Name="UpdateBanner" Grid.Row="1" Visibility="Collapsed"
+                Background="#1E3528" BorderBrush="#46C273" BorderThickness="0,1,0,1" Padding="12,6">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="Ocultar" Padding="8,3" FontSize="11" Margin="6,0,0,0" Click="BtnDismissUpdateBanner_Click"/>
+                <Button DockPanel.Dock="Right" Content="Actualizar ahora" Style="{StaticResource AccentButton}" Padding="10,3" FontSize="11" Click="BtnOpenFoundUpdate_Click"/>
+                <TextBlock x:Name="LblUpdateBanner" Text="Hay una nueva versión disponible en GitHub." Foreground="#D9F9E6" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            </DockPanel>
+        </Border>
+
+        <!-- ================================================================ -->
+        <!-- 2. CLEAN TRANSPORT BAR (Plain Spanish Labels)                    -->
+        <!-- ================================================================ -->
+        <Border Grid.Row="2" Background="#1E232A" BorderBrush="#2D3440" BorderThickness="0,1,0,1" Padding="10,7">
+            <DockPanel LastChildFill="False">
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Pattern vs Full Song Mode -->
+                    <Border Background="#15181D" BorderBrush="#394250" BorderThickness="1" CornerRadius="4" Padding="2" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Button x:Name="BtnModePat" Content="Patrón" Padding="10,4" FontSize="11" Click="BtnModePat_Click"
+                                    ToolTip="Escucha en bucle solo el patrón actual (ideal mientras compones)"/>
+                            <Button x:Name="BtnModeSong" Content="Canción" Padding="10,4" FontSize="11" Margin="2,0,0,0" Click="BtnModeSong_Click"
+                                    ToolTip="Escucha la canción completa que armaste en la pestaña 3. Canción"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Button x:Name="BtnPlay" Content="Reproducir" Style="{StaticResource AccentButton}" Width="92" Margin="0,0,6,0" Click="BtnPlay_Click"
+                            ToolTip="Pulsa Espacio en cualquier momento para reproducir o pausar"/>
+                    <Button x:Name="BtnStop" Content="Detener" Width="74" Margin="0,0,12,0" Click="BtnStop_Click"
+                            ToolTip="Detiene el audio y vuelve al principio"/>
+
+                    <!-- Tempo / BPM -->
+                    <Border Background="#15181D" BorderBrush="#394250" BorderThickness="1" CornerRadius="4" Padding="8,3" Margin="0,0,8,0"
+                            ToolTip="Velocidad del ritmo en golpes por minuto (BPM)">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="BPM" Foreground="#93A0B3" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <Button Content="-" Padding="6,1" Click="BtnBpmDown_Click"/>
+                            <TextBox x:Name="TxtBpm" Text="140" Width="40" Background="Transparent" Foreground="#F0A150"
+                                     BorderThickness="0" FontFamily="Consolas" FontSize="14" FontWeight="Bold"
+                                     HorizontalContentAlignment="Center" VerticalAlignment="Center"
+                                     LostFocus="TxtBpm_LostFocus" KeyDown="TxtBpm_KeyDown"/>
+                            <Button Content="+" Padding="6,1" Click="BtnBpmUp_Click"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Position LCD -->
+                    <Border Background="#15181D" BorderBrush="#394250" BorderThickness="1" CornerRadius="4" Padding="10,3" Margin="0,0,10,0"
+                            ToolTip="Posición actual: Compás : Tiempo : Paso">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="Compás" Foreground="#93A0B3" FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock x:Name="LblPos" Text="01:1:1" Foreground="#46C273" FontFamily="Consolas" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Swing & Metronome -->
+                    <TextBlock Text="Swing" Foreground="#93A0B3" FontSize="11" VerticalAlignment="Center" Margin="0,0,5,0"
+                               ToolTip="Añade sensación humana y rebote al ritmo"/>
+                    <Slider x:Name="SldSwing" Minimum="0" Maximum="0.7" Value="0.08" Width="58" VerticalAlignment="Center" ValueChanged="SldSwing_ValueChanged"/>
+                    <CheckBox x:Name="ChkMetro" Content="Metrónomo" Margin="10,0,14,0" VerticalAlignment="Center" Click="ChkMetro_Click"
+                              ToolTip="Sonido de guía para llevar el tiempo"/>
+
+                    <!-- Pattern Selector -->
+                    <TextBlock Text="Patrón:" Foreground="#93A0B3" FontSize="11" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <ComboBox x:Name="CmbPattern" Width="168" SelectionChanged="CmbPattern_SelectionChanged"/>
+                    <Button Content="Nuevo" Margin="5,0,0,0" Padding="8,4" Click="BtnNewPattern_Click" ToolTip="Crear un patrón nuevo vacío"/>
+                    <Button Content="Duplicar" Margin="4,0,0,0" Padding="8,4" Click="BtnClonePattern_Click" ToolTip="Copiar el patrón actual para hacer variaciones"/>
+                </StackPanel>
+
+                <!-- Right: Eco Mode & CPU -->
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <CheckBox x:Name="ChkEco" Content="Modo Ligero" Margin="0,0,10,0" Click="ChkEco_Click"
+                              ToolTip="Reduce el uso de CPU y RAM para PCs de bajos recursos"/>
+                    <Border Background="#15181D" BorderBrush="#394250" BorderThickness="1" CornerRadius="4" Padding="8,4">
+                        <TextBlock x:Name="LblCpu" Text="CPU 1% | Voces: 0" Foreground="#46C273" FontFamily="Consolas" FontSize="11" FontWeight="Bold"/>
+                    </Border>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ================================================================ -->
+        <!-- 3. SIMPLE 4-TAB STUDIO NAVIGATION                                -->
+        <!-- ================================================================ -->
+        <Border Grid.Row="3" Background="#191D24" BorderBrush="#2D3440" BorderThickness="0,0,0,1" Padding="10,0">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                    <RadioButton x:Name="TabRack" GroupName="MainTabs" Content="1. Ritmos" Style="{StaticResource TabNavButton}" IsChecked="True" Checked="TabNav_Checked"/>
+                    <RadioButton x:Name="TabPiano" GroupName="MainTabs" Content="2. Melodías" Style="{StaticResource TabNavButton}" Checked="TabNav_Checked"/>
+                    <RadioButton x:Name="TabPlaylist" GroupName="MainTabs" Content="3. Canción" Style="{StaticResource TabNavButton}" Checked="TabNav_Checked"/>
+                    <RadioButton x:Name="TabMixer" GroupName="MainTabs" Content="4. Mezcla y Efectos" Style="{StaticResource TabNavButton}" Checked="TabNav_Checked"/>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="Actualizar" Padding="9,4" FontSize="11" Margin="0,0,6,0" Click="MenuCheckUpdates_Click" ToolTip="Buscar actualizaciones en GitHub"/>
+                    <Button Content="Exportar WAV" Style="{StaticResource AccentButton}" Padding="10,4" FontSize="11" Click="MenuExportWav16_Click"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ================================================================ -->
+        <!-- 4. CONTEXTUAL 1-LINE GUIDE BANNER (Beginner-friendly!)           -->
+        <!-- ================================================================ -->
+        <Border x:Name="GuideBanner" Grid.Row="4" Background="#1A222D" BorderBrush="#293545" BorderThickness="0,0,0,1" Padding="12,5">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="Ocultar guía" Padding="8,2" FontSize="10" Click="BtnHideGuide_Click"/>
+                <TextBlock x:Name="LblGuideText"
+                           Text="Paso 1 (Ritmos): Haz clic en los cuadros para crear tu batería. Haz clic en cualquier instrumento para ajustar su sonido a la derecha."
+                           Foreground="#B8C7DB" FontSize="11.5" VerticalAlignment="Center"/>
+            </DockPanel>
+        </Border>
+
+        <!-- ================================================================ -->
+        <!-- 5. MAIN WORKSPACE VIEWS                                          -->
+        <!-- ================================================================ -->
+        <Grid Grid.Row="5">
+            <!-- VIEW 1: RITMOS (CHANNEL RACK + SIDE INSTRUMENT EDITOR) -->
+            <Grid x:Name="ViewRack" Visibility="Visible">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="320"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Controls bar -->
+                    <Border Grid.Row="0" Background="#1D2229" BorderBrush="#2E3642" BorderThickness="0,0,0,1" Padding="10,7">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Duración del patrón:" Foreground="#93A0B3" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <ComboBox x:Name="CmbPatLength" Width="145" SelectionChanged="CmbPatLength_SelectionChanged">
+                                <ComboBoxItem Content="16 pasos (1 compás)" Tag="16"/>
+                                <ComboBoxItem Content="32 pasos (2 compases)" Tag="32" IsSelected="True"/>
+                                <ComboBoxItem Content="64 pasos (4 compases)" Tag="64"/>
+                            </ComboBox>
+
+                            <TextBlock Text="Agregar instrumento:" Foreground="#93A0B3" VerticalAlignment="Center" Margin="14,0,6,0"/>
+                            <ComboBox x:Name="CmbAddInstrument" Width="195" SelectedIndex="0">
+                                <ComboBoxItem Content="Bombo (Kick)"/>
+                                <ComboBoxItem Content="Caja (Snare)"/>
+                                <ComboBoxItem Content="Palma (Clap 808)"/>
+                                <ComboBoxItem Content="Platillo Cerrado (Hi-Hat)"/>
+                                <ComboBoxItem Content="Platillo Abierto (Open Hat)"/>
+                                <ComboBoxItem Content="Bajo 808 (SubLab)"/>
+                                <ComboBoxItem Content="Sintetizador Clásico (3xOsc)"/>
+                                <ComboBoxItem Content="Campana / Pluck (Sytrus FM)"/>
+                                <ComboBoxItem Content="Acordes / Lead (SuperSaw)"/>
+                                <ComboBoxItem Content="Piano / Teclado (FL Keys)"/>
+                                <ComboBoxItem Content="Audio Propio (Sampler WAV)"/>
+                            </ComboBox>
+                            <Button Content="Agregar" Style="{StaticResource AccentButton}" Margin="6,0,0,0" Click="BtnAddInstrument_Click"/>
+                            <Button Content="Limpiar pasos" Margin="10,0,0,0" Click="BtnClearSteps_Click"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Self-explanatory Column Header Bar -->
+                    <Border Grid.Row="1" Background="#181C22" BorderBrush="#272E38" BorderThickness="0,0,0,1" Padding="18,4,18,4">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="26"/>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="76"/>
+                                <ColumnDefinition Width="52"/>
+                                <ColumnDefinition Width="82"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="On" Foreground="#7D8B9E" FontSize="10" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="1" Text="Instrumento (clic para editar)" Foreground="#7D8B9E" FontSize="10" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="2" Text="Volumen" Foreground="#7D8B9E" FontSize="10" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="3" Text="Mezcla" Foreground="#7D8B9E" FontSize="10" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="4" Text="Acciones" Foreground="#7D8B9E" FontSize="10" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="5" Text="Pasos del ritmo (cada color agrupa 4 pasos = 1 tiempo)" Foreground="#7D8B9E" FontSize="10" FontWeight="SemiBold"/>
+                        </Grid>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="10">
+                        <StackPanel x:Name="RackRowsPanel"/>
+                    </ScrollViewer>
+                </Grid>
+
+                <!-- Right: Clean Docked Instrument Inspector -->
+                <Border Grid.Column="1" Background="#1B2027" BorderBrush="#2E3642" BorderThickness="1,0,0,0" Padding="12">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="InstrumentInspectorPanel"/>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+
+            <!-- VIEW 2: MELODÍAS (PIANO ROLL) -->
+            <Grid x:Name="ViewPiano" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="#1D2229" BorderBrush="#2E3642" BorderThickness="0,0,0,1" Padding="10,7">
+                    <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="Instrumento:" Foreground="#93A0B3" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <ComboBox x:Name="CmbPianoChannel" Width="155" Margin="0,0,10,0" SelectionChanged="CmbPianoChannel_SelectionChanged"/>
+
+                        <TextBlock Text="Cuadrícula:" Foreground="#93A0B3" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <ComboBox x:Name="CmbSnap" Width="98" Margin="0,0,10,0" SelectionChanged="CmbSnap_SelectionChanged">
+                            <ComboBoxItem Content="1/4 (Lento)" Tag="4"/>
+                            <ComboBoxItem Content="1/8" Tag="2"/>
+                            <ComboBoxItem Content="1/16 (Normal)" Tag="1" IsSelected="True"/>
+                            <ComboBoxItem Content="1/32 (Rápido)" Tag="0.5"/>
+                            <ComboBoxItem Content="Tresillo" Tag="0.333333"/>
+                            <ComboBoxItem Content="Sin ajuste" Tag="0"/>
+                        </ComboBox>
+
+                        <TextBlock Text="Guía de Escala:" Foreground="#93A0B3" VerticalAlignment="Center" Margin="0,0,5,0"
+                                   ToolTip="Ilumina las filas de notas que suenan bien juntas"/>
+                        <ComboBox x:Name="CmbScaleRoot" Width="54" Margin="0,0,4,0" SelectionChanged="CmbScale_SelectionChanged"/>
+                        <ComboBox x:Name="CmbScaleType" Width="148" Margin="0,0,10,0" SelectionChanged="CmbScale_SelectionChanged"/>
+
+                        <TextBlock Text="Poner:" Foreground="#93A0B3" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <ComboBox x:Name="CmbChordStamp" Width="125" Margin="0,0,10,0" SelectionChanged="CmbChordStamp_SelectionChanged"/>
+
+                        <CheckBox x:Name="ChkGhost" Content="Ver otros instrumentos" IsChecked="True" Margin="0,0,10,0" Click="ChkGhost_Click"/>
+
+                        <ComboBox x:Name="CmbPianoTools" Width="158" SelectionChanged="CmbPianoTools_SelectionChanged">
+                            <ComboBoxItem Content="Ayudas rápidas..." IsSelected="True"/>
+                            <ComboBoxItem Content="Alinear al ritmo (Quantize)"/>
+                            <ComboBoxItem Content="Hacer más humano"/>
+                            <ComboBoxItem Content="Efecto rasgueo (Strum)"/>
+                            <ComboBoxItem Content="Convertir en Arpegio"/>
+                            <ComboBoxItem Content="Subir 1 Octava (más agudo)"/>
+                            <ComboBoxItem Content="Bajar 1 Octava (más grave)"/>
+                            <ComboBoxItem Content="Borrar todas las notas"/>
+                        </ComboBox>
+                    </WrapPanel>
+                </Border>
+
+                <ctrl:PianoRollControl x:Name="PianoRollCtrl" Grid.Row="1"/>
+            </Grid>
+
+            <!-- VIEW 3: CANCIÓN (PLAYLIST) -->
+            <Grid x:Name="ViewPlaylist" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="#1D2229" BorderBrush="#2E3642" BorderThickness="0,0,0,1" Padding="10,7">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="Escuchar Canción Completa" Style="{StaticResource AccentButton}" Margin="0,0,10,0" Click="BtnPlaySong_Click"/>
+                        <Button Content="+ Curva de Filtro (Subida/Bajada)" Margin="0,0,6,0" Click="BtnAddAutoFilter_Click"/>
+                        <Button Content="+ Curva de Volumen (Fade)" Margin="0,0,6,0" Click="BtnAddAutoVol_Click"/>
+                        <Button Content="+ Importar Audio WAV" Margin="0,0,12,0" Click="BtnImportPlaylistWav_Click"/>
+                        <TextBlock Text="Clic izq: colocar patrón | Arrastrar borde: repetir | Clic der: borrar | Doble clic: editar"
+                                   Foreground="#93A0B3" FontSize="11" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <ctrl:PlaylistControl x:Name="PlaylistCtrl" Grid.Row="1"/>
+            </Grid>
+
+            <!-- VIEW 4: MEZCLA Y EFECTOS (MIXER) -->
+            <Grid x:Name="ViewMixer" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="355"/>
+                </Grid.ColumnDefinitions>
+
+                <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Background="#161A20" Padding="8">
+                    <StackPanel x:Name="MixerStripsPanel" Orientation="Horizontal"/>
+                </ScrollViewer>
+
+                <Border Grid.Column="1" Background="#1B2027" BorderBrush="#2E3642" BorderThickness="1,0,0,0" Padding="12">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="MixerFxInspectorPanel"/>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- ================================================================ -->
+        <!-- 6. STATUS BAR                                                    -->
+        <!-- ================================================================ -->
+        <Border Grid.Row="6" Background="#12151A" BorderBrush="#29303B" BorderThickness="0,1,0,0" Padding="10,0">
+            <DockPanel>
+                <TextBlock x:Name="LblStatus" DockPanel.Dock="Left"
+                           Text="Listo. Pulsa Espacio para escuchar o toca notas con tu teclado (Z-M / Q-I)."
+                           Foreground="#93A0B3" FontSize="11" VerticalAlignment="Center"/>
+                <TextBlock x:Name="LblVersion" DockPanel.Dock="Right"
+                           Text="v1.1.0" Foreground="#6F7D91" FontSize="11" Margin="14,0,0,0" VerticalAlignment="Center"/>
+                <TextBlock x:Name="LblKeyboardHint" DockPanel.Dock="Right"
+                           Text="Teclado Piano: Octava C4 (- / +)" Foreground="#7D8B9E" FontSize="11" VerticalAlignment="Center"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

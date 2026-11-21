@@ -1,0 +1,66 @@
+<Window x:Class="FLLiteStudio.UI.UpdateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Actualizaciones — FL-Lite Studio"
+        Width="490" Height="390"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="#181C22"
+        Foreground="#E6EBF2">
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock Text="Actualizaciones oficiales" FontSize="17" FontWeight="Bold" Foreground="White"/>
+            <TextBlock x:Name="LblCurrentVer" Text="Versión instalada: v1.1.0" Foreground="#93A0B3" FontSize="12" Margin="0,3,0,0"/>
+        </StackPanel>
+
+        <!-- Locked Official Source Card (Read-Only) -->
+        <Border Grid.Row="1" Background="#212730" BorderBrush="#343D4B" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12">
+            <StackPanel>
+                <TextBlock x:Name="LblOfficialRepo" Text="Origen oficial bloqueado: github.com/iansitooas/flstudio"
+                           Foreground="#46C273" FontSize="12" FontWeight="SemiBold"/>
+                <CheckBox x:Name="ChkAutoCheck" Content="Buscar actualizaciones automáticamente al abrir la app" Margin="0,8,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Status & Release Notes -->
+        <Border Grid.Row="2" Background="#14181E" BorderBrush="#2F3744" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="LblStatus" Grid.Row="0" Text="Pulsa Buscar ahora para comprobar si hay una nueva versión." Foreground="#D6DFEB" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                <TextBox x:Name="TxtNotes" Grid.Row="1" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto" Background="Transparent" Foreground="#9FB0C4"
+                         BorderThickness="0" FontSize="11.5"/>
+            </Grid>
+        </Border>
+
+        <!-- Progress Bar -->
+        <StackPanel Grid.Row="3" x:Name="ProgressPanel" Visibility="Collapsed" Margin="0,0,0,10">
+            <DockPanel Margin="0,0,0,4">
+                <TextBlock x:Name="LblProgress" Text="Descargando actualización..." Foreground="#D6DFEB" FontSize="11"/>
+                <TextBlock x:Name="LblPercent" DockPanel.Dock="Right" Text="0%" Foreground="#F0A150" FontFamily="Consolas" FontSize="11"/>
+            </DockPanel>
+            <ProgressBar x:Name="PrgDownload" Height="10" Minimum="0" Maximum="100" Value="0" Background="#14181E" Foreground="#E8832A"/>
+        </StackPanel>
+
+        <!-- Footer Buttons -->
+        <DockPanel Grid.Row="4">
+            <Button x:Name="BtnCheck" DockPanel.Dock="Left" Content="Buscar ahora" Padding="14,6" Click="BtnCheck_Click"/>
+            <Button x:Name="BtnClose" DockPanel.Dock="Right" Content="Cerrar" Padding="14,6" Margin="8,0,0,0" Click="BtnClose_Click"/>
+            <Button x:Name="BtnInstall" DockPanel.Dock="Right" Content="Descargar e instalar" Style="{StaticResource AccentButton}"
+                    Padding="14,6" Visibility="Collapsed" Click="BtnInstall_Click"/>
+        </DockPanel>
+    </Grid>
+</Window>

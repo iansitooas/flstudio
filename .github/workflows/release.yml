@@ -1,0 +1,45 @@
+name: Publicar Release Windows (FL-Lite Studio)
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Extraer version desde tag
+        id: ver
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $clean = $tag.TrimStart('v', 'V')
+          echo "version=$clean" >> $env:GITHUB_OUTPUT
+
+      - name: Compilar FL-Lite Studio (Release)
+        shell: pwsh
+        run: |
+          dotnet publish FLLiteStudio.csproj -c Release -r win-x64 --self-contained false -p:Version=${{ steps.ver.outputs.version }} -o publish_out
+
+      - name: Empaquetar ZIP para actualizador automatico
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "publish_out\*" -DestinationPath "FLLiteStudio-win-x64.zip" -Force
+
+      - name: Crear GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: FLLiteStudio-win-x64.zip
+          generate_release_notes: true
