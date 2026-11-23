@@ -10,6 +10,10 @@ public enum InstrumentType
     SytrusFM,
     SuperSaw,
     KeysPiano,
+    PluckedString,
+    BrassWind,
+    StringsPad,
+    WorldMallet,
     WavSampler
 }
 
@@ -17,12 +21,18 @@ public enum DrumKind
 {
     Kick,
     Kick808,
+    KickBoomBap,
     Snare,
+    SnareTrap,
+    SnareReggaeton,
     Clap,
     ClosedHat,
     OpenHat,
     Rimshot,
     Perc,
+    Cowbell,
+    Tom,
+    Shaker,
     Crash
 }
 
@@ -31,7 +41,55 @@ public enum KeysMode
     Rhodes,
     GrandPiano,
     BellKeys,
-    Organ
+    Organ,
+    Harpsichord,
+    Accordion,
+    Wurlitzer
+}
+
+public enum PluckStyle
+{
+    AcousticNylon,
+    AcousticSteel,
+    ElectricClean,
+    ElectricRock,
+    ElectricBass,
+    Harp,
+    Koto,
+    Pizzicato
+}
+
+public enum WindStyle
+{
+    Trumpet,
+    TrapBrass,
+    Saxophone,
+    Flute,
+    DarkFlute,
+    Clarinet,
+    Trombone
+}
+
+public enum PadStyle
+{
+    ViolinSolo,
+    Cello,
+    OrchestraStrings,
+    ChoirAah,
+    SpacePad,
+    VintageTapePad,
+    DarkTrapPad
+}
+
+public enum MalletStyle
+{
+    Marimba,
+    Xylophone,
+    Vibraphone,
+    Kalimba,
+    SteelDrum,
+    TubularBell,
+    MusicBox
 }
 
 public enum WaveKind
@@ -82,6 +140,10 @@ public sealed class ChannelModel
     // Unified clean synth/drum/sampler parameters
     public DrumKind DrumKind { get; set; } = DrumKind.Kick;
     public KeysMode KeysMode { get; set; } = KeysMode.Rhodes;
+    public PluckStyle PluckStyle { get; set; } = PluckStyle.AcousticNylon;
+    public WindStyle WindStyle { get; set; } = WindStyle.Flute;
+    public PadStyle PadStyle { get; set; } = PadStyle.OrchestraStrings;
+    public MalletStyle MalletStyle { get; set; } = MalletStyle.Marimba;
     public WaveKind Wave1 { get; set; } = WaveKind.Saw;
     public WaveKind Wave2 { get; set; } = WaveKind.Square;
     public int Coarse2 { get; set; } = -12;
@@ -95,6 +157,8 @@ public sealed class ChannelModel
     public float Drive { get; set; } = 0.25f;
     public float Punch { get; set; } = 0.75f;
     public float Tone { get; set; } = 0.65f;
+    public float VibratoDepth { get; set; } = 0.15f;
+    public float VibratoRateHz { get; set; } = 5.2f;
 
     // FM (Sytrus)
     public float FmRatio { get; set; } = 2.0f;

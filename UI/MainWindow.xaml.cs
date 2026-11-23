@@ -503,10 +503,52 @@ public partial class MainWindow : Window
 
             case InstrumentType.KeysPiano:
                 AddInspectorCombo(InstrumentInspectorPanel, "Tipo de Teclado",
-                    new[] { "Rhodes Eléctrico", "Grand Piano", "Campana Suave", "Órgano Club" }, (int)ch.KeysMode, idx => ch.KeysMode = (KeysMode)idx);
+                    new[] { "Rhodes Eléctrico", "Grand Piano", "Celesta / Campana", "Órgano Club", "Clavicordio", "Acordeón", "Wurlitzer Vintage" },
+                    (int)ch.KeysMode, idx => ch.KeysMode = (KeysMode)idx);
                 AddInspectorSlider(InstrumentInspectorPanel, "Brillo", 0.1, 1.0, ch.Tone, v => ch.Tone = (float)v, v => $"{(int)(v * 100)}%");
                 AddInspectorSlider(InstrumentInspectorPanel, "Duración (Decay)", 0.2, 3.0, ch.Decay, v => ch.Decay = (float)v, v => $"{v:0.00} s");
                 AddInspectorSlider(InstrumentInspectorPanel, "Release", 0.04, 1.8, ch.Release, v => ch.Release = (float)v, v => $"{v:0.00} s");
+                break;
+
+            case InstrumentType.PluckedString:
+                AddInspectorCombo(InstrumentInspectorPanel, "Tipo de Cuerda",
+                    new[] { "Guitarra Nylon", "Guitarra Acero", "Guitarra Clean", "Guitarra Rock", "Bajo Eléctrico", "Arpa Clásica", "Koto Oriental", "Pizzicato" },
+                    (int)ch.PluckStyle, idx => ch.PluckStyle = (PluckStyle)idx);
+                AddInspectorSlider(InstrumentInspectorPanel, "Brillo de Cuerda", 0.1, 1.0, ch.Tone, v => ch.Tone = (float)v, v => $"{(int)(v * 100)}%");
+                AddInspectorSlider(InstrumentInspectorPanel, "Sustain / Resonancia", 0.25, 2.8, ch.Decay, v => ch.Decay = (float)v, v => $"{v:0.00} s");
+                AddInspectorSlider(InstrumentInspectorPanel, "Filtro Tono", 400, 14000, ch.CutoffHz, v => ch.CutoffHz = (float)v, v => $"{(int)v} Hz");
+                AddInspectorSlider(InstrumentInspectorPanel, "Overdrive / Rock", 0, 1.0, ch.Drive, v => ch.Drive = (float)v, v => $"{(int)(v * 100)}%");
+                break;
+
+            case InstrumentType.BrassWind:
+                AddInspectorCombo(InstrumentInspectorPanel, "Instrumento de Viento",
+                    new[] { "Trompeta", "Trap Brass Hit", "Saxofón", "Flauta Traversa", "Flauta Trap Oscura", "Clarinete", "Trombón" },
+                    (int)ch.WindStyle, idx => ch.WindStyle = (WindStyle)idx);
+                AddInspectorSlider(InstrumentInspectorPanel, "Brillo / Aire", 0.1, 1.0, ch.Tone, v => ch.Tone = (float)v, v => $"{(int)(v * 100)}%");
+                AddInspectorSlider(InstrumentInspectorPanel, "Vibrato", 0, 0.8, ch.VibratoDepth, v => ch.VibratoDepth = (float)v, v => $"{(int)(v * 100)}%");
+                AddInspectorSlider(InstrumentInspectorPanel, "Ataque del Soplo", 0.005, 0.35, ch.Attack, v => ch.Attack = (float)v, v => $"{(int)(v * 1000)} ms");
+                AddInspectorSlider(InstrumentInspectorPanel, "Saturación", 0, 0.8, ch.Drive, v => ch.Drive = (float)v, v => $"{(int)(v * 100)}%");
+                AddInspectorSlider(InstrumentInspectorPanel, "Release", 0.04, 1.2, ch.Release, v => ch.Release = (float)v, v => $"{v:0.00} s");
+                break;
+
+            case InstrumentType.StringsPad:
+                AddInspectorCombo(InstrumentInspectorPanel, "Estilo Orquesta / Pad",
+                    new[] { "Violín Solo", "Violonchelo", "Cuerdas Orquesta", "Coro Vocal Aah", "Pad Espacial", "Pad Cinta Vintage", "Pad Oscuro Trap" },
+                    (int)ch.PadStyle, idx => ch.PadStyle = (PadStyle)idx);
+                AddInspectorSlider(InstrumentInspectorPanel, "Filtro / Apertura", 300, 12000, ch.CutoffHz, v => ch.CutoffHz = (float)v, v => $"{(int)v} Hz");
+                AddInspectorSlider(InstrumentInspectorPanel, "Amplitud Estéreo", 0, 45, ch.Detune, v => ch.Detune = (float)v, v => $"{(int)v} cents");
+                AddInspectorSlider(InstrumentInspectorPanel, "Vibrato", 0, 0.6, ch.VibratoDepth, v => ch.VibratoDepth = (float)v, v => $"{(int)(v * 100)}%");
+                AddInspectorSlider(InstrumentInspectorPanel, "Entrada (Ataque)", 0.02, 1.2, ch.Attack, v => ch.Attack = (float)v, v => $"{(int)(v * 1000)} ms");
+                AddInspectorSlider(InstrumentInspectorPanel, "Cola (Release)", 0.1, 2.2, ch.Release, v => ch.Release = (float)v, v => $"{v:0.00} s");
+                break;
+
+            case InstrumentType.WorldMallet:
+                AddInspectorCombo(InstrumentInspectorPanel, "Tipo de Percusión Melódica",
+                    new[] { "Marimba", "Xilófono", "Vibráfono", "Kalimba", "Steel Drum", "Campanas Iglesia", "Caja Musical" },
+                    (int)ch.MalletStyle, idx => ch.MalletStyle = (MalletStyle)idx);
+                AddInspectorSlider(InstrumentInspectorPanel, "Brillo del Golpe", 0.1, 1.0, ch.Tone, v => ch.Tone = (float)v, v => $"{(int)(v * 100)}%");
+                AddInspectorSlider(InstrumentInspectorPanel, "Resonancia (Decay)", 0.15, 2.8, ch.Decay, v => ch.Decay = (float)v, v => $"{v:0.00} s");
+                AddInspectorSlider(InstrumentInspectorPanel, "Trémolo (Vibráfono)", 0, 0.9, ch.VibratoDepth, v => ch.VibratoDepth = (float)v, v => $"{(int)(v * 100)}%");
                 break;
 
             case InstrumentType.WavSampler:
@@ -1016,6 +1058,30 @@ public partial class MainWindow : Window
                 ("Brillante", () => { ch.CutoffHz = 7800f; ch.Release = 0.25f; }),
                 ("Pad Suave", () => { ch.Attack = 0.22f; ch.CutoffHz = 2600f; ch.Release = 0.85f; })
             },
+            InstrumentType.PluckedString => new (string, Action)[]
+            {
+                ("Nylon", () => { ch.PluckStyle = PluckStyle.AcousticNylon; ch.Tone = 0.52f; ch.Drive = 0f; }),
+                ("Acero", () => { ch.PluckStyle = PluckStyle.AcousticSteel; ch.Tone = 0.80f; ch.Drive = 0f; }),
+                ("Rock", () => { ch.PluckStyle = PluckStyle.ElectricRock; ch.Tone = 0.76f; ch.Drive = 0.68f; })
+            },
+            InstrumentType.BrassWind => new (string, Action)[]
+            {
+                ("Flauta Trap", () => { ch.WindStyle = WindStyle.DarkFlute; ch.Tone = 0.55f; ch.VibratoDepth = 0.22f; }),
+                ("Brass Hit", () => { ch.WindStyle = WindStyle.TrapBrass; ch.Tone = 0.85f; ch.Drive = 0.30f; }),
+                ("Saxo", () => { ch.WindStyle = WindStyle.Saxophone; ch.Tone = 0.60f; ch.VibratoDepth = 0.25f; })
+            },
+            InstrumentType.StringsPad => new (string, Action)[]
+            {
+                ("Orquesta", () => { ch.PadStyle = PadStyle.OrchestraStrings; ch.CutoffHz = 4400f; ch.Attack = 0.22f; }),
+                ("Coro", () => { ch.PadStyle = PadStyle.ChoirAah; ch.Attack = 0.30f; ch.Release = 0.90f; }),
+                ("Pad Oscuro", () => { ch.PadStyle = PadStyle.DarkTrapPad; ch.CutoffHz = 1350f; ch.Attack = 0.32f; })
+            },
+            InstrumentType.WorldMallet => new (string, Action)[]
+            {
+                ("Marimba", () => { ch.MalletStyle = MalletStyle.Marimba; ch.Tone = 0.55f; ch.Decay = 0.55f; }),
+                ("Kalimba", () => { ch.MalletStyle = MalletStyle.Kalimba; ch.Tone = 0.65f; ch.Decay = 0.85f; }),
+                ("Steel Drum", () => { ch.MalletStyle = MalletStyle.SteelDrum; ch.Tone = 0.78f; ch.Decay = 0.75f; })
+            },
             _ => Array.Empty<(string, Action)>()
         };
 
@@ -1197,33 +1263,21 @@ public partial class MainWindow : Window
         }
     }
 
-    private void BtnAddInstrument_Click(object sender, RoutedEventArgs e)
+    private void BtnOpenInstrumentLibrary_Click(object sender, RoutedEventArgs e)
     {
-        PushUndo();
-        int idx = CmbAddInstrument.SelectedIndex;
-        int nextTrack = Math.Clamp(_project.Channels.Count + 1, 1, 12);
-        string color = DemoProjects.ChannelPalette[_project.Channels.Count % DemoProjects.ChannelPalette.Length];
-
-        ChannelModel ch = idx switch
+        var win = new InstrumentBrowserWindow(_audio, ch =>
         {
-            0 => new ChannelModel { Name = "Kick", Type = InstrumentType.DrumSynth, DrumKind = DrumKind.Kick, ColorHex = color, MixerTrack = 1 },
-            1 => new ChannelModel { Name = "Snare", Type = InstrumentType.DrumSynth, DrumKind = DrumKind.Snare, ColorHex = color, MixerTrack = 2 },
-            2 => new ChannelModel { Name = "Clap 808", Type = InstrumentType.DrumSynth, DrumKind = DrumKind.Clap, ColorHex = color, MixerTrack = 2 },
-            3 => new ChannelModel { Name = "Hi-Hat", Type = InstrumentType.DrumSynth, DrumKind = DrumKind.ClosedHat, ColorHex = color, MixerTrack = 3 },
-            4 => new ChannelModel { Name = "Open Hat", Type = InstrumentType.DrumSynth, DrumKind = DrumKind.OpenHat, ColorHex = color, MixerTrack = 3 },
-            5 => new ChannelModel { Name = "808 SubLab", Type = InstrumentType.Bass808, ColorHex = color, MixerTrack = 4 },
-            6 => new ChannelModel { Name = "3xOsc Synth", Type = InstrumentType.Osc3x, ColorHex = color, MixerTrack = nextTrack },
-            7 => new ChannelModel { Name = "Sytrus FM", Type = InstrumentType.SytrusFM, ColorHex = color, MixerTrack = nextTrack },
-            8 => new ChannelModel { Name = "FLEX SuperSaw", Type = InstrumentType.SuperSaw, ColorHex = color, MixerTrack = nextTrack },
-            9 => new ChannelModel { Name = "FL Keys", Type = InstrumentType.KeysPiano, ColorHex = color, MixerTrack = 6 },
-            _ => new ChannelModel { Name = "Sampler WAV", Type = InstrumentType.WavSampler, ColorHex = color, MixerTrack = 8 }
+            PushUndo();
+            _project.Channels.Add(ch);
+            _project.ActiveChannelId = ch.Id;
+            _project.EnsureIntegrity();
+            RefreshAllUI();
+            SetStatus($"Instrumento añadido: {ch.Name}");
+        })
+        {
+            Owner = this
         };
-
-        _project.Channels.Add(ch);
-        _project.ActiveChannelId = ch.Id;
-        _project.EnsureIntegrity();
-        RefreshAllUI();
-        SetStatus($"Instrumento añadido: {ch.Name}");
+        win.ShowDialog();
     }
 
     private void BtnClearSteps_Click(object sender, RoutedEventArgs e)

@@ -95,6 +95,10 @@ public static class MusicTheory
         InstrumentType.SytrusFM => "Campanas / Pluck (Sytrus FM)",
         InstrumentType.SuperSaw => "Acordes / Lead (SuperSaw)",
         InstrumentType.KeysPiano => "Piano / Teclado (FL Keys)",
+        InstrumentType.PluckedString => "Guitarra / Cuerda Pulsada",
+        InstrumentType.BrassWind => "Vientos y Metales",
+        InstrumentType.StringsPad => "Orquesta, Coros y Pads",
+        InstrumentType.WorldMallet => "Marimba, Kalimba y Campanas",
         InstrumentType.WavSampler => "Audio Propio (Sampler WAV)",
         _ => type.ToString()
     };

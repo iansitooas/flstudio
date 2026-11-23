@@ -165,6 +165,7 @@
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="+ Instrumentos (62)" Padding="9,4" FontSize="11" Margin="0,0,6,0" Click="BtnOpenInstrumentLibrary_Click" ToolTip="Abrir Biblioteca de 62 Instrumentos"/>
                     <Button Content="Actualizar" Padding="9,4" FontSize="11" Margin="0,0,6,0" Click="MenuCheckUpdates_Click" ToolTip="Buscar actualizaciones en GitHub"/>
                     <Button Content="Exportar WAV" Style="{StaticResource AccentButton}" Padding="10,4" FontSize="11" Click="MenuExportWav16_Click"/>
                 </StackPanel>
@@ -204,28 +205,16 @@
                     <!-- Controls bar -->
                     <Border Grid.Row="0" Background="#1D2229" BorderBrush="#2E3642" BorderThickness="0,0,0,1" Padding="10,7">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Duración del patrón:" Foreground="#93A0B3" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                            <ComboBox x:Name="CmbPatLength" Width="145" SelectionChanged="CmbPatLength_SelectionChanged">
+                            <Button Content="+ Biblioteca de Instrumentos (62)" Style="{StaticResource AccentButton}" Margin="0,0,12,0" Click="BtnOpenInstrumentLibrary_Click"
+                                    ToolTip="Explora, escucha y añade guitarras, pianos, vientos, orquesta, 808s, baterías, marimbas y sintetizadores"/>
+
+                            <TextBlock Text="Duración:" Foreground="#93A0B3" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <ComboBox x:Name="CmbPatLength" Width="140" SelectionChanged="CmbPatLength_SelectionChanged">
                                 <ComboBoxItem Content="16 pasos (1 compás)" Tag="16"/>
                                 <ComboBoxItem Content="32 pasos (2 compases)" Tag="32" IsSelected="True"/>
                                 <ComboBoxItem Content="64 pasos (4 compases)" Tag="64"/>
                             </ComboBox>
 
-                            <TextBlock Text="Agregar instrumento:" Foreground="#93A0B3" VerticalAlignment="Center" Margin="14,0,6,0"/>
-                            <ComboBox x:Name="CmbAddInstrument" Width="195" SelectedIndex="0">
-                                <ComboBoxItem Content="Bombo (Kick)"/>
-                                <ComboBoxItem Content="Caja (Snare)"/>
-                                <ComboBoxItem Content="Palma (Clap 808)"/>
-                                <ComboBoxItem Content="Platillo Cerrado (Hi-Hat)"/>
-                                <ComboBoxItem Content="Platillo Abierto (Open Hat)"/>
-                                <ComboBoxItem Content="Bajo 808 (SubLab)"/>
-                                <ComboBoxItem Content="Sintetizador Clásico (3xOsc)"/>
-                                <ComboBoxItem Content="Campana / Pluck (Sytrus FM)"/>
-                                <ComboBoxItem Content="Acordes / Lead (SuperSaw)"/>
-                                <ComboBoxItem Content="Piano / Teclado (FL Keys)"/>
-                                <ComboBoxItem Content="Audio Propio (Sampler WAV)"/>
-                            </ComboBox>
-                            <Button Content="Agregar" Style="{StaticResource AccentButton}" Margin="6,0,0,0" Click="BtnAddInstrument_Click"/>
                             <Button Content="Limpiar pasos" Margin="10,0,0,0" Click="BtnClearSteps_Click"/>
                         </StackPanel>
                     </Border>
